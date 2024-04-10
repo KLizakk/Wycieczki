@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "J8vYxX+ykOS25rDsJfqUPbCAxQqH9Q5vK25n2qY2DoWKwDozgpxyJvJTa2M3sEVa6pkTPLbaNi26zrWq1oTBQQ==",
+  "dgSpecHash": "0gqZaBoiwaxhH90y8/nPucHUZul5p7dvo096fQ1TG0DDEUn1tNfZgrrZudngule681DK+wWNUMEiUQM2U9jkWQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\kacper\\Downloads\\Todo-master\\Desktop\\Studia semestr 6\\Wycieczki\\Trips\\TripsS.csproj",
+  "projectFilePath": "C:\\Users\\kacper\\Desktop\\Studia semestr 6\\ASP\\Trips\\TripsS.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kacper\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\kacper\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

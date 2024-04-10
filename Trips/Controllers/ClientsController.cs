@@ -9,6 +9,7 @@ using Trips;
 using Trips.Models;
 using TripsS.Repositories;
 using TripsS.Repositories.Interfaces;   
+using TripsS.Services.Interfaces;
 
 namespace Trips.Controllers
 {
@@ -16,15 +17,15 @@ namespace Trips.Controllers
     {
 
 
-        private readonly IClientRepository _clientRepository;
-        public ClientsController(IClientRepository clientRepository)
+        private readonly IClientService _clientServices;  
+        public ClientsController(IClientService clientRepository)
         {
-            _clientRepository = clientRepository;
+            this._clientServices = clientRepository;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View(await _clientRepository.GetAllAsync());
+            return View(await _clientServices.GetAllAsync());
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -34,7 +35,7 @@ namespace Trips.Controllers
                 return NotFound();
             }
 
-            var client = await _clientRepository.GetById(id);
+            var client = await _clientServices.GetByIdAsync(id);
             if (client == null)
             {
                 return NotFound();
@@ -53,8 +54,8 @@ namespace Trips.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _clientRepository.InsertAsync(client);
-                await _clientRepository.SaveAsync();
+                await _clientServices.InsertAsync(client);
+                await _clientServices.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(client);
@@ -67,7 +68,7 @@ namespace Trips.Controllers
                 return NotFound();
             }
 
-            var client = await _clientRepository.GetById(id);
+            var client = await _clientServices.GetByIdAsync(id);
             if (client == null)
             {
                 return NotFound();
@@ -88,8 +89,8 @@ namespace Trips.Controllers
             {
                 try
                 {
-                    _clientRepository.Update(client);
-                    await _clientRepository.SaveAsync();
+                    _clientServices.Update(client);
+                    await _clientServices.SaveAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -114,7 +115,7 @@ namespace Trips.Controllers
                 return NotFound();
             }
 
-            var client = await _clientRepository.GetById(id);
+            var client = await _clientServices.GetByIdAsync(id);
             if (client == null)
             {
                 return NotFound();
@@ -128,19 +129,19 @@ namespace Trips.Controllers
 
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var client = await _clientRepository.GetById(id);
+            var client = await _clientServices.GetByIdAsync(id);
             if (client != null)
             {
-                _clientRepository.Delete(client);
+                _clientServices.Delete(client);
             }
 
-            await _clientRepository.SaveAsync();
+            await _clientServices.SaveAsync();
             return RedirectToAction(nameof(Index));
         }
         
         private bool ClientExists(int id)
         {
-            return _clientRepository.Exist(new Client { IdClient = id });
+            return _clientServices.Exist(new Client { IdClient = id });
         }
 
     }

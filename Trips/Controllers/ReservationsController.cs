@@ -8,14 +8,15 @@ using Microsoft.EntityFrameworkCore;
 using Trips;
 using Trips.Models;
 using TripsS.Repositories.Interfaces;
+using TripsS.Services.Interfaces;
 
 namespace TripsS.Controllers
 {
     public class ReservationsController : Controller
     {
-        private readonly IReservationRepository _context;
+        private readonly IReservationService _context;
 
-        public ReservationsController(IReservationRepository context)
+        public ReservationsController(IReservationService context)
         {
             _context = context;
         }

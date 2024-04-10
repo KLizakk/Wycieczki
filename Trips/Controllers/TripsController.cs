@@ -8,16 +8,17 @@ using Microsoft.EntityFrameworkCore;
 using Trips;
 using Trips.Models;
 using TripsS.Repositories.Interfaces;
+using TripsS.Services.Interfaces;
 
 namespace Trips.Controllers
 {
     public class TripsController : Controller
     {
-        private readonly ITripRepository _context;
+        private readonly ITripService _context;
 
-        public TripsController(ITripRepository context)
+        public TripsController(ITripService context)
         {
-            _context = context;
+            this._context = context;
         }
 
         // GET: Trips

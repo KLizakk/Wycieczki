@@ -3,6 +3,8 @@ using Trips;
 using Trips.Data;
 using TripsS.Repositories;
 using TripsS.Repositories.Interfaces;
+using TripsS.Services;
+using TripsS.Services.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +17,11 @@ builder.Services.AddDbContext<TripContext>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IClientRepository,ClientRepositorycs>();
 builder.Services.AddScoped<ITripRepository,TripRepository>();
-builder.Services.AddScoped<IReservationRepository,ReservationRepositorycs>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepositorycs>();
+//////////// Services
+builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<ITripService, TripService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 var app = builder.Build();
 
 
