@@ -116,6 +116,7 @@ namespace Trips.Controllers
             }
 
             var client = await _clientServices.GetByIdAsync(id);
+
             if (client == null)
             {
                 return NotFound();
