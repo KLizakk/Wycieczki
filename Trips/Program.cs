@@ -8,7 +8,7 @@ using TripsS.Services.Interfaces;
 using TripsS.ViewModel;
 using TripsS.Validator;
 using FluentValidation;
-
+using TripsS.AutoMapper;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +30,10 @@ builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IValidator<ClientViewModel>, ClientValidator>();
 builder.Services.AddScoped<IValidator<TripViewModel>, TripValidator>();
 builder.Services.AddScoped<IValidator<ReservationViewModel>, ReservationValidator>();
+builder.Services.AddAutoMapper(options =>
+{
+    options.AddProfile<TripAutoMapper>();
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
