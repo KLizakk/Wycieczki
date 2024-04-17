@@ -10,6 +10,7 @@ using Trips.Models;
 using TripsS.Repositories;
 using TripsS.Repositories.Interfaces;   
 using TripsS.Services.Interfaces;
+using TripsS.ViewModel;
 
 namespace Trips.Controllers
 {
@@ -25,7 +26,16 @@ namespace Trips.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _clientServices.GetAllAsync());
+            var clients = await _clientServices.GetAllAsync();
+            var clientsList = clients.Select(client => new ClientViewModel
+            {
+                IdClient = client.IdClient,
+                FirstName = client.FirstName,
+                LastName = client.LastName,
+                Email = client.Email,
+                Phone = client.Phone
+            }).ToList();
+            return View(clientsList);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -40,8 +50,16 @@ namespace Trips.Controllers
             {
                 return NotFound();
             }
+            var clientViewModel = new ClientViewModel
+            {
+                IdClient = client.IdClient,
+                FirstName = client.FirstName,
+                LastName = client.LastName,
+                Email = client.Email,
+                Phone = client.Phone
+            };
 
-            return View(client);
+            return View(clientViewModel);
         }
         public IActionResult Create()
         {
@@ -50,15 +68,25 @@ namespace Trips.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task <IActionResult> Create([Bind("IdClient,FirstName,LastName,Email,PhoneNumber")] Client client)
+        public async Task <IActionResult> Create([Bind("IdClient,FirstName,LastName,Email,Phone")] ClientViewModel clientViewModel)
         {
             if (ModelState.IsValid)
             {
+                var client = new Client
+                {
+                   FirstName = clientViewModel.FirstName,
+                   LastName = clientViewModel.LastName,
+                   Email = clientViewModel.Email,
+                   Phone = clientViewModel.Phone,
+                   IdClient = clientViewModel.IdClient
+                   
+
+                };
                 await _clientServices.InsertAsync(client);
                 await _clientServices.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(client);
+            return View(clientViewModel);
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -73,20 +101,36 @@ namespace Trips.Controllers
             {
                 return NotFound();
             }
-            return View(client);
+            var clientViewModel = new ClientViewModel
+            {
+                IdClient = client.IdClient,
+                FirstName = client.FirstName,
+                LastName = client.LastName,
+                Email = client.Email,
+                Phone = client.Phone
+            };
+            return View(clientViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task <IActionResult> Edit(int id, [Bind("IdClient,FirstName,LastName,Email,PhoneNumber")] Client client)
+        public async Task <IActionResult> Edit(int id, [Bind("IdClient,FirstName,LastName,Email,PhoneNumber")] ClientViewModel clientViewModel)
         {
-            if (id != client.IdClient)
+            if (id != clientViewModel.IdClient)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var client = new Client
+                {
+                    IdClient = clientViewModel.IdClient,
+                    FirstName = clientViewModel.FirstName,
+                    LastName = clientViewModel.LastName,
+                    Email = clientViewModel.Email,
+                    Phone = clientViewModel.Phone
+                };
                 try
                 {
                     _clientServices.Update(client);
@@ -105,7 +149,7 @@ namespace Trips.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(client);
+            return View(clientViewModel);
         }
 
         public async Task<IActionResult> Delete(int? id)
@@ -116,13 +160,21 @@ namespace Trips.Controllers
             }
 
             var client = await _clientServices.GetByIdAsync(id);
+            var clientViewModel = new ClientViewModel
+            {
+                IdClient = client.IdClient,
+                FirstName = client.FirstName,
+                LastName = client.LastName,
+                Email = client.Email,
+                Phone = client.Phone
+            };
 
             if (client == null)
             {
                 return NotFound();
             }
 
-            return View(client);
+            return View(clientViewModel);
         }
 
         [HttpPost, ActionName("Delete")]
