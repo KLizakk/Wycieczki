@@ -114,43 +114,43 @@ namespace Trips.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task <IActionResult> Edit(int id, [Bind("IdClient,FirstName,LastName,Email,PhoneNumber")] ClientViewModel clientViewModel)
-        {
-            if (id != clientViewModel.IdClient)
+            public async Task <IActionResult> Edit(int id, [Bind("IdClient,FirstName,LastName,Email,PhoneNumber")] ClientViewModel clientViewModel)
             {
-                return NotFound();
-            }
+                if (id != clientViewModel.IdClient)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                var client = new Client
+                if (ModelState.IsValid)
                 {
-                    IdClient = clientViewModel.IdClient,
-                    FirstName = clientViewModel.FirstName,
-                    LastName = clientViewModel.LastName,
-                    Email = clientViewModel.Email,
-                    Phone = clientViewModel.Phone
-                };
-                try
-                {
-                    _clientServices.Update(client);
-                    await _clientServices.SaveAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClientExists(client.IdClient))
+                    var client = new Client
                     {
-                        return NotFound();
-                    }
-                    else
+                        IdClient = clientViewModel.IdClient,
+                        FirstName = clientViewModel.FirstName,
+                        LastName = clientViewModel.LastName,
+                        Email = clientViewModel.Email,
+                        Phone = clientViewModel.Phone
+                    };
+                    try
                     {
-                        throw;
+                        _clientServices.Update(client);
+                        await _clientServices.SaveAsync();
                     }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!ClientExists(client.IdClient))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(clientViewModel);
             }
-            return View(clientViewModel);
-        }
 
         public async Task<IActionResult> Delete(int? id)
         {
