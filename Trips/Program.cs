@@ -5,6 +5,10 @@ using TripsS.Repositories;
 using TripsS.Repositories.Interfaces;
 using TripsS.Services;
 using TripsS.Services.Interfaces;
+using TripsS.ViewModel;
+using TripsS.Validator;
+using FluentValidation;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,8 +26,11 @@ builder.Services.AddScoped<IReservationRepository, ReservationRepositorycs>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<ITripService, TripService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
+// Validators
+builder.Services.AddScoped<IValidator<ClientViewModel>, ClientValidator>();
+builder.Services.AddScoped<IValidator<TripViewModel>, TripValidator>();
+builder.Services.AddScoped<IValidator<ReservationViewModel>, ReservationValidator>();
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

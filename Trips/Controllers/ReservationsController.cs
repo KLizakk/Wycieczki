@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,12 @@ namespace TripsS.Controllers
     public class ReservationsController : Controller
     {
         private readonly IReservationService _context;
+        private readonly IValidator<ReservationViewModel> _reservationValidator;
 
-        public ReservationsController(IReservationService context)
+        public ReservationsController(IReservationService context, IValidator<ReservationViewModel> reservationValidator)
         {
             _context = context;
+            _reservationValidator = reservationValidator;
         }
 
         // GET: Reservations
@@ -53,7 +56,15 @@ namespace TripsS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdReservation,IdClient,IdTrip,AmountOfPeople,ReservationDate,Status")] ReservationViewModel reservationViewModel)
         {
-            if (ModelState.IsValid)
+            var result = _reservationValidator.Validate(reservationViewModel);
+            if (!result.IsValid)
+            {
+                foreach (var failure in result.Errors)
+                {
+                    ModelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
+                }
+            }
+            if (result.IsValid)
             {
                 var reservation = new Reservation
                 {
@@ -108,8 +119,15 @@ namespace TripsS.Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            var result = _reservationValidator.Validate(reservationViewModel);
+            if (!result.IsValid)
+            {
+                foreach (var failure in result.Errors)
+                {
+                    ModelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
+                }
+            }
+            if (result.IsValid)
             {
                 var reservation = new Reservation()
                 {

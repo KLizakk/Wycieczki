@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,11 @@ namespace Trips.Controllers
     public class TripsController : Controller
     {
         private readonly ITripService _context;
-
-        public TripsController(ITripService context)
+        private readonly IValidator<TripViewModel> _tripValidator;
+        public TripsController(ITripService context, IValidator<TripViewModel> tripValidator)
         {
             this._context = context;
+            _tripValidator = tripValidator;
         }
 
         // GET: Trips
@@ -71,7 +73,15 @@ namespace Trips.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdTrip,From,To,StartTrip,EndTrip,Price")] TripViewModel tripViewModel)
         {
-           if(ModelState.IsValid)
+           var result = _tripValidator.Validate(tripViewModel);
+            if (!result.IsValid)
+            {
+                foreach (var failure in result.Errors)
+                {
+                    ModelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
+                }
+            }
+           if(result.IsValid)
             {
                 var trip = new Trip
                 {
@@ -130,7 +140,15 @@ namespace Trips.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            var result = _tripValidator.Validate(tripViewModel);
+            if (!result.IsValid)
+            {
+                foreach (var failure in result.Errors)
+                {
+                    ModelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
+                }
+            }
+            if (result.IsValid)
             {
                 var trip = new Trip()
                 {

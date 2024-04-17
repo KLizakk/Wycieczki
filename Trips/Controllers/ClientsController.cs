@@ -11,6 +11,10 @@ using TripsS.Repositories;
 using TripsS.Repositories.Interfaces;   
 using TripsS.Services.Interfaces;
 using TripsS.ViewModel;
+using TripsS.Validator;
+using System.ComponentModel.DataAnnotations;
+using FluentValidation;
+
 
 namespace Trips.Controllers
 {
@@ -18,10 +22,12 @@ namespace Trips.Controllers
     {
 
 
-        private readonly IClientService _clientServices;  
-        public ClientsController(IClientService clientRepository)
+        private readonly IClientService _clientServices;
+        private readonly IValidator<ClientViewModel> _clientValidator;
+        public ClientsController(IClientService clientRepository, IValidator<ClientViewModel> clientValidator)
         {
             this._clientServices = clientRepository;
+            _clientValidator = clientValidator;
         }
 
         public async Task<IActionResult> Index()
@@ -70,7 +76,8 @@ namespace Trips.Controllers
         [ValidateAntiForgeryToken]
         public async Task <IActionResult> Create([Bind("IdClient,FirstName,LastName,Email,Phone")] ClientViewModel clientViewModel)
         {
-            if (ModelState.IsValid)
+            var _clientValidatorR = _clientValidator.Validate(clientViewModel);
+            if (_clientValidatorR.IsValid)
             {
                 var client = new Client
                 {
@@ -120,9 +127,16 @@ namespace Trips.Controllers
                 {
                     return NotFound();
                 }
-
-                if (ModelState.IsValid)
+            var result= _clientValidator.Validate(clientViewModel);
+            if (!result.IsValid)
+            {
+                foreach (var failure in result.Errors)
                 {
+                    ModelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
+                }
+            }
+            if (result.IsValid)
+            {
                     var client = new Client
                     {
                         IdClient = clientViewModel.IdClient,
