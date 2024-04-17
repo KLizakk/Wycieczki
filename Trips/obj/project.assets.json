@@ -8141,11 +8141,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\K4CZP3R\\Source\\Repos\\Wycieczki\\Trips\\TripsS.csproj",
+      "projectUniqueName": "C:\\Users\\K4CZP3R\\Desktop\\ASP\\Wycieczki\\Trips\\TripsS.csproj",
       "projectName": "TripsS",
-      "projectPath": "C:\\Users\\K4CZP3R\\Source\\Repos\\Wycieczki\\Trips\\TripsS.csproj",
+      "projectPath": "C:\\Users\\K4CZP3R\\Desktop\\ASP\\Wycieczki\\Trips\\TripsS.csproj",
       "packagesPath": "C:\\Users\\K4CZP3R\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\K4CZP3R\\Source\\Repos\\Wycieczki\\Trips\\obj\\",
+      "outputPath": "C:\\Users\\K4CZP3R\\Desktop\\ASP\\Wycieczki\\Trips\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

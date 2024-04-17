@@ -9,6 +9,7 @@ using Trips;
 using Trips.Models;
 using TripsS.Repositories.Interfaces;
 using TripsS.Services.Interfaces;
+using TripsS.ViewModel;
 
 namespace Trips.Controllers
 {
@@ -24,7 +25,19 @@ namespace Trips.Controllers
         // GET: Trips
         public async Task<IActionResult> Index()
         {
-            return View(await _context.GetAllAsync());
+            var Trips = await _context.GetAllAsync();
+            var TripsList = Trips.Select(trip => new TripViewModel
+            {
+                IdTrip = trip.IdTrip,
+                From = trip.From,
+                To = trip.To,
+                StartTrip = trip.StartTrip,
+                EndTrip = trip.EndTrip,
+                Price = trip.Price
+            }).ToList();
+
+
+            return View( TripsList);
         }
 
         //// GET: Trips/Details/5
@@ -56,15 +69,26 @@ namespace Trips.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdTrip,From,To,StartTrip,EndTrip,Price")] Trip trip)
+        public async Task<IActionResult> Create([Bind("IdTrip,From,To,StartTrip,EndTrip,Price")] TripViewModel tripViewModel)
         {
            if(ModelState.IsValid)
             {
+                var trip = new Trip
+                {
+                   EndTrip = tripViewModel.EndTrip,
+                   From = tripViewModel.From,
+                   IdTrip = tripViewModel.IdTrip,
+                   Price = tripViewModel.Price,
+                   StartTrip = tripViewModel.StartTrip,
+                   To = tripViewModel.To
+
+
+                };
                 await _context.InsertAsync(trip);
                 await _context.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(trip);
+            return View(tripViewModel);
         }
 
         // GET: Trips/Edit/5
@@ -80,7 +104,18 @@ namespace Trips.Controllers
             {
                 return NotFound();
             }
-            return View(trip);
+
+            //Mapowanie Trip na TripViewModel
+            var tripViewModel = new TripViewModel
+            {
+                IdTrip = trip.IdTrip,
+                From = trip.From,
+                To = trip.To,
+                StartTrip = trip.StartTrip,
+                EndTrip = trip.EndTrip,
+                Price = trip.Price
+            };
+            return View(tripViewModel);
         }
 
         // POST: Trips/Edit/5
@@ -88,15 +123,25 @@ namespace Trips.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdTrip,From,To,StartTrip,EndTrip,Price")] Trip trip)
+        public async Task<IActionResult> Edit(int id, [Bind("IdTrip,From,To,StartTrip,EndTrip,Price")] TripViewModel tripViewModel)
         {
-            if (id != trip.IdTrip)
+            if (id != tripViewModel.IdTrip)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var trip = new Trip()
+                {
+                    From = tripViewModel.From,
+                    To = tripViewModel.To,
+                    StartTrip = tripViewModel.StartTrip,
+                    EndTrip = tripViewModel.EndTrip,
+                    Price = tripViewModel.Price,
+                    IdTrip = tripViewModel.IdTrip
+
+                };
                 try
                 {
                     _context.Update(trip);
@@ -115,7 +160,7 @@ namespace Trips.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(trip);
+            return View(tripViewModel);
         }
 
         // GET: Trips/Delete/5

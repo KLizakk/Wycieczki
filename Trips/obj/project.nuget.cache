@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "UL29aKNDIpegDirG8e2RVxudhW9sm6mAU9BDRpVoE9teHc2z+7zXzonoeRUq1KwsXWp7Xn3tQKPv+wSUbH6biQ==",
+  "dgSpecHash": "sdDmLqDs1YbxZmnHvtrskpjyf9jMjw7yys0ms9eLSVAzq4D+kSgufbCjEn8lXkHx8Oj3OZHJ2HEAPjaCoSEdOQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\K4CZP3R\\Source\\Repos\\Wycieczki\\Trips\\TripsS.csproj",
+  "projectFilePath": "C:\\Users\\K4CZP3R\\Desktop\\ASP\\Wycieczki\\Trips\\TripsS.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\K4CZP3R\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\K4CZP3R\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
