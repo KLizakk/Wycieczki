@@ -9,6 +9,7 @@ using Trips;
 using Trips.Models;
 using TripsS.Repositories.Interfaces;
 using TripsS.Services.Interfaces;
+using TripsS.ViewModel;
 
 namespace TripsS.Controllers
 {
@@ -24,7 +25,17 @@ namespace TripsS.Controllers
         // GET: Reservations
         public async Task<IActionResult> Index()
         {
-            return View(await _context.GetAllAsync());
+            var Reservations = await _context.GetAllAsync();
+            var reservationViewModel = Reservations.Select(reservation => new ReservationViewModel
+            {
+                IdReservation = reservation.IdReservation,
+                IdClient = reservation.IdClient,
+                IdTrip = reservation.IdTrip,
+                AmountOfPeople = reservation.AmountOfPeople,
+                ReservationDate = reservation.ReservationDate
+                
+            }).ToList();
+            return View(reservationViewModel);
         }
 
        
@@ -40,16 +51,26 @@ namespace TripsS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdReservation,IdClient,IdTrip,AmountOfPeople,ReservationDate,Status")] Reservation reservation)
+        public async Task<IActionResult> Create([Bind("IdReservation,IdClient,IdTrip,AmountOfPeople,ReservationDate,Status")] ReservationViewModel reservationViewModel)
         {
             if (ModelState.IsValid)
             {
+                var reservation = new Reservation
+                {
+                    IdClient = reservationViewModel.IdClient,
+                    IdTrip = reservationViewModel.IdTrip,
+                    AmountOfPeople = reservationViewModel.AmountOfPeople,
+                    ReservationDate = reservationViewModel.ReservationDate
+
+                };
                 reservation.IdReservation = Guid.NewGuid();
                 await _context.InsertAsync(reservation);
                 await _context.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(reservation);
+
+            
+            return View(reservationViewModel);
         }
 
         // GET: Reservations/Edit/5
@@ -65,7 +86,15 @@ namespace TripsS.Controllers
             {
                 return NotFound();
             }
-            return View(reservation);
+            var reservationViewModel = new ReservationViewModel
+            {
+                IdReservation = reservation.IdReservation,
+                IdClient = reservation.IdClient,
+                IdTrip = reservation.IdTrip,
+                AmountOfPeople = reservation.AmountOfPeople,
+                ReservationDate = reservation.ReservationDate
+            };
+            return View(reservationViewModel);
         }
 
         // POST: Reservations/Edit/5
@@ -73,15 +102,24 @@ namespace TripsS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("IdReservation,IdClient,IdTrip,AmountOfPeople,ReservationDate,Status")] Reservation reservation)
+        public async Task<IActionResult> Edit(Guid id, [Bind("IdReservation,IdClient,IdTrip,AmountOfPeople,ReservationDate,Status")] ReservationViewModel reservationViewModel)
         {
-            if (id != reservation.IdReservation)
+            if (id != reservationViewModel.IdReservation)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var reservation = new Reservation()
+                {
+                    IdClient = reservationViewModel.IdClient,
+                    IdTrip = reservationViewModel.IdTrip,
+                    AmountOfPeople = reservationViewModel.AmountOfPeople,
+                    ReservationDate = reservationViewModel.ReservationDate,
+                    IdReservation = reservationViewModel.IdReservation
+
+                };
                 try
                 {
                     _context.Update(reservation);
@@ -100,7 +138,7 @@ namespace TripsS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(reservation);
+            return View(reservationViewModel);
         }
 
         // GET: Reservations/Delete/5
@@ -117,8 +155,15 @@ namespace TripsS.Controllers
             {
                 return NotFound();
             }
+            var reservationViewModel = new ReservationViewModel
+            {
+                IdClient = reservation.IdClient,
+                IdTrip = reservation.IdTrip,
+                AmountOfPeople = reservation.AmountOfPeople,
+                ReservationDate = reservation.ReservationDate
 
-            return View(reservation);
+            };
+            return View(reservationViewModel);
         }
 
         // POST: Reservations/Delete/5
