@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "K/GvInktD04XdoR9ORwwzyxt/KhhrxkBIHsddDadBR81AGp4ejCCoNJlEFe/ezx/V8nEYPJ7yi8mYMaX7hUYow==",
+  "dgSpecHash": "rwPX3a4HWPc8/uAXWOKwvFYCk0xWoAIwYW0A+A/H+SuoKuTjFDTJBSE0TOlwXO4lq0rXaC4zFANsFPP40zyWeQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\kacper\\Desktop\\Studia semestr 6\\ASP\\Wycieczki\\Trips\\TripsS.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\kacper\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\kacper\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\kacper\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
     "C:\\Users\\kacper\\.nuget\\packages\\fluentvalidation\\11.9.0\\fluentvalidation.11.9.0.nupkg.sha512",
