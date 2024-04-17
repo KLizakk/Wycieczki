@@ -97,9 +97,11 @@ Kacper Lizak / 59443
 
 # Cel ćwieczenia
 
-## 
+## Cel ćwiczenia polega na implementacji warstwy ViewModel w projekcie ASP.NET w celu poprawy separacji logiki prezentacji od logiki biznesowej oraz ułatwienia przekazywania danych między widokami a kontrolerami.
 
 # Wprowadzenie
+
+### Warstwa ViewModel w aplikacji webowej pełni rolę pośrednika między warstwą prezentacji a warstwą biznesową, zapewniając odpowiednie dane do wyświetlenia w widoku bezpośrednio niezależnie od modelu domenowego. Jest to szczególnie przydatne w przypadku, gdy widok wymaga danych z wielu różnych modeli biznesowych lub gdy potrzebne są dane w innym formacie niż te dostarczone przez model domenowy.
 
 ### 
 
@@ -296,3 +298,11 @@ public async Task<IActionResult> Edit(int? id)
 
 
 # Wnioski
+
+### Wnioski: Implementacja warstwy ViewModel w projekcie ASP.NET umożliwia odseparowanie logiki prezentacji od logiki biznesowej, co prowadzi do łatwiejszego zarządzania kodem i unikania nadmiernego powiązania między poszczególnymi komponentami aplikacji. Dzięki zastosowaniu ViewModeli możliwe jest również zachowanie elastyczności w dostarczaniu danych do widoków, co ułatwia rozwój i utrzymanie aplikacji w przyszłości.
+
+
+
+
+
+
