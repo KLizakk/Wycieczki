@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,11 +19,12 @@ namespace TripsS.Controllers
     {
         private readonly IReservationService _context;
         private readonly IValidator<ReservationViewModel> _reservationValidator;
-
-        public ReservationsController(IReservationService context, IValidator<ReservationViewModel> reservationValidator)
+        private readonly IMapper _mapper;
+        public ReservationsController(IReservationService context, IValidator<ReservationViewModel> reservationValidator, IMapper mapper)
         {
             _context = context;
             _reservationValidator = reservationValidator;
+            _mapper = mapper;
         }
 
         // GET: Reservations
@@ -66,14 +68,7 @@ namespace TripsS.Controllers
             }
             if (result.IsValid)
             {
-                var reservation = new Reservation
-                {
-                    IdClient = reservationViewModel.IdClient,
-                    IdTrip = reservationViewModel.IdTrip,
-                    AmountOfPeople = reservationViewModel.AmountOfPeople,
-                    ReservationDate = reservationViewModel.ReservationDate
-
-                };
+                var reservation = _mapper.Map<ReservationViewModel, Reservation>(reservationViewModel);
                 reservation.IdReservation = Guid.NewGuid();
                 await _context.InsertAsync(reservation);
                 await _context.SaveAsync();
@@ -97,14 +92,7 @@ namespace TripsS.Controllers
             {
                 return NotFound();
             }
-            var reservationViewModel = new ReservationViewModel
-            {
-                IdReservation = reservation.IdReservation,
-                IdClient = reservation.IdClient,
-                IdTrip = reservation.IdTrip,
-                AmountOfPeople = reservation.AmountOfPeople,
-                ReservationDate = reservation.ReservationDate
-            };
+            var reservationViewModel = _mapper.Map<Reservation, ReservationViewModel>(reservation);
             return View(reservationViewModel);
         }
 
@@ -129,15 +117,7 @@ namespace TripsS.Controllers
             }
             if (result.IsValid)
             {
-                var reservation = new Reservation()
-                {
-                    IdClient = reservationViewModel.IdClient,
-                    IdTrip = reservationViewModel.IdTrip,
-                    AmountOfPeople = reservationViewModel.AmountOfPeople,
-                    ReservationDate = reservationViewModel.ReservationDate,
-                    IdReservation = reservationViewModel.IdReservation
-
-                };
+                var reservation = _mapper.Map<ReservationViewModel, Reservation>(reservationViewModel);
                 try
                 {
                     _context.Update(reservation);
@@ -173,14 +153,7 @@ namespace TripsS.Controllers
             {
                 return NotFound();
             }
-            var reservationViewModel = new ReservationViewModel
-            {
-                IdClient = reservation.IdClient,
-                IdTrip = reservation.IdTrip,
-                AmountOfPeople = reservation.AmountOfPeople,
-                ReservationDate = reservation.ReservationDate
-
-            };
+            var reservationViewModel = _mapper.Map<Reservation, ReservationViewModel>(reservation);
             return View(reservationViewModel);
         }
 

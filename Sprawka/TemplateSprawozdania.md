@@ -101,55 +101,7 @@ Kacper Lizak / 59443
 
 # Wprowadzenie
 
-### 
-
-### 
-
-
-
-# Realizacja
-## Utworzenie folderu dla AutoMappera 
-
-
-
-<center>
-
-![alt text](image-3.png)
-
-</center>
-
-
-
-## Kod AutoMappera
-```cs
-public class TripAutoMapper : Profile
-{
-   public TripAutoMapper()
-    {
-        CreateMap<TripViewModel, Trip>()
-             .ForMember(x => x.From, opt => opt.MapFrom(src => src.From.ToUpperInvariant()))
-             .ForMember(x => x.To, opt => opt.MapFrom(src => src.To.ToUpperInvariant()))
-             .ForMember(x => x.StartTrip, opt => opt.MapFrom(src => src.StartTrip.ToUniversalTime()))
-             .ForMember(x => x.EndTrip, opt => opt.MapFrom(src => src.EndTrip.ToUniversalTime()))
-             .ReverseMap();
-        CreateMap<ClientViewModel, Client>()
-            .ForMember(ClientViewModel => ClientViewModel.FirstName, opt => opt.MapFrom(src => src.FirstName.ToUpperInvariant()))
-            .ForMember(ClientViewModel => ClientViewModel.LastName, opt => opt.MapFrom(src => src.LastName.ToUpperInvariant()))
-            .ReverseMap();
-        CreateMap<ReservationViewModel, Reservation>()
-            .ForMember(ReservationViewModel => ReservationViewModel.ReservationDate, opt => opt.MapFrom(src => src.ReservationDate.ToUniversalTime()))
-            .ReverseMap();
-    }
-}
-```
-
-## Dodanie AutoMappera do buildera
-```cs
-builder.Services.AddAutoMapper(options =>
-{
-    options.AddProfile<TripAutoMapper>();
-});
-```
+### Validator w ASP.NET jest narzędziem służącym do sprawdzania poprawności danych wejściowych w formularzach i żądaniach HTTP. Zapewnia to integralność danych i zabezpiecza przed nieprawidłowymi danymi wprowadzanymi przez użytkowników. Automapper natomiast to biblioteka ułatwiająca mapowanie danych między różnymi modelami w aplikacji, redukując ilość powtarzalnego kodu i zwiększając czytelność oraz elastyczność implementacji. Ich wspólne zastosowanie w projekcie ASP.NET przyczynia się do zwiększenia niezawodności, łatwości utrzymania i szybkości rozwoju aplikacji poprzez automatyzację procesów walidacji i mapowania danych.
 
 ## Stworzenie folderu dla Validator'ów
 
@@ -256,6 +208,65 @@ builder.Services.AddScoped<IValidator<ClientViewModel>, ClientValidator>();
 builder.Services.AddScoped<IValidator<TripViewModel>, TripValidator>();
 builder.Services.AddScoped<IValidator<ReservationViewModel>, ReservationValidator>();
 ```
+
+
+## Utworzenie folderu dla AutoMappera 
+
+
+
+<center>
+
+![alt text](image-3.png)
+
+</center>
+
+
+
+## Kod AutoMappera
+```cs
+public class TripAutoMapper : Profile
+{
+   public TripAutoMapper()
+    {
+        CreateMap<TripViewModel, Trip>()
+             .ForMember(x => x.From, opt => opt.MapFrom(src => src.From.ToUpperInvariant()))
+             .ForMember(x => x.To, opt => opt.MapFrom(src => src.To.ToUpperInvariant()))
+             .ForMember(x => x.StartTrip, opt => opt.MapFrom(src => src.StartTrip.ToUniversalTime()))
+             .ForMember(x => x.EndTrip, opt => opt.MapFrom(src => src.EndTrip.ToUniversalTime()))
+             .ReverseMap();
+        CreateMap<ClientViewModel, Client>()
+            .ForMember(ClientViewModel => ClientViewModel.FirstName, opt => opt.MapFrom(src => src.FirstName.ToUpperInvariant()))
+            .ForMember(ClientViewModel => ClientViewModel.LastName, opt => opt.MapFrom(src => src.LastName.ToUpperInvariant()))
+            .ReverseMap();
+        CreateMap<ReservationViewModel, Reservation>()
+            .ForMember(ReservationViewModel => ReservationViewModel.ReservationDate, opt => opt.MapFrom(src => src.ReservationDate.ToUniversalTime()))
+            .ReverseMap();
+    }
+}
+```
+
+## Dodanie AutoMappera do buildera
+```cs
+builder.Services.AddAutoMapper(options =>
+{
+    options.AddProfile<TripAutoMapper>();
+});
+```
+
+## Przykład AutoMappera w ClientController
+
+```cs
+public async Task<IActionResult> Index()
+{
+    var clients = await _clientServices.GetAllAsync();
+
+    var clientsList = _mapper.Map<List<Client>, List<ClientViewModel>>(clients);
+
+    return View(clientsList);
+}
+```
+
+
 
 ## Wnioski: 
 ### Użycie walidatora pozwala na skuteczną weryfikację danych wejściowych, zapewniając poprawność i kompletność informacji przekazywanych do aplikacji. Z kolei wykorzystanie AutoMappera usprawnia proces mapowania danych między obiektami, co redukuje ilość powtarzalnego kodu i ułatwia zarządzanie aplikacją poprzez automatyzację tego procesu. Kombinacja tych narzędzi znacząco zwiększa niezawodność i czytelność kodu oraz przyspiesza rozwój oprogramowania.

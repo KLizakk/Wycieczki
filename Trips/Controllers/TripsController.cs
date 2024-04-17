@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,26 +19,19 @@ namespace Trips.Controllers
     {
         private readonly ITripService _context;
         private readonly IValidator<TripViewModel> _tripValidator;
-        public TripsController(ITripService context, IValidator<TripViewModel> tripValidator)
+        private readonly IMapper _mapper;
+        public TripsController(ITripService context, IValidator<TripViewModel> tripValidator , IMapper mapper)
         {
             this._context = context;
             _tripValidator = tripValidator;
+            _mapper = mapper;
         }
 
         // GET: Trips
         public async Task<IActionResult> Index()
         {
             var Trips = await _context.GetAllAsync();
-            var TripsList = Trips.Select(trip => new TripViewModel
-            {
-                IdTrip = trip.IdTrip,
-                From = trip.From,
-                To = trip.To,
-                StartTrip = trip.StartTrip,
-                EndTrip = trip.EndTrip,
-                Price = trip.Price
-            }).ToList();
-
+            var TripsList = _mapper.Map<List<Trip>, List<TripViewModel>>(Trips);
 
             return View( TripsList);
         }
@@ -83,17 +77,7 @@ namespace Trips.Controllers
             }
            if(result.IsValid)
             {
-                var trip = new Trip
-                {
-                   EndTrip = tripViewModel.EndTrip,
-                   From = tripViewModel.From,
-                   IdTrip = tripViewModel.IdTrip,
-                   Price = tripViewModel.Price,
-                   StartTrip = tripViewModel.StartTrip,
-                   To = tripViewModel.To
-
-
-                };
+                var trip = _mapper.Map<TripViewModel, Trip>(tripViewModel);
                 await _context.InsertAsync(trip);
                 await _context.SaveAsync();
                 return RedirectToAction(nameof(Index));
@@ -116,15 +100,7 @@ namespace Trips.Controllers
             }
 
             //Mapowanie Trip na TripViewModel
-            var tripViewModel = new TripViewModel
-            {
-                IdTrip = trip.IdTrip,
-                From = trip.From,
-                To = trip.To,
-                StartTrip = trip.StartTrip,
-                EndTrip = trip.EndTrip,
-                Price = trip.Price
-            };
+            var tripViewModel = _mapper.Map<Trip, TripViewModel>(trip);
             return View(tripViewModel);
         }
 
@@ -150,16 +126,7 @@ namespace Trips.Controllers
             }
             if (result.IsValid)
             {
-                var trip = new Trip()
-                {
-                    From = tripViewModel.From,
-                    To = tripViewModel.To,
-                    StartTrip = tripViewModel.StartTrip,
-                    EndTrip = tripViewModel.EndTrip,
-                    Price = tripViewModel.Price,
-                    IdTrip = tripViewModel.IdTrip
-
-                };
+                var trip = _mapper.Map<TripViewModel, Trip>(tripViewModel);
                 try
                 {
                     _context.Update(trip);
