@@ -1583,3 +1583,4 @@ C:\Users\kacper\Desktop\Studia semestr 6\ASP\Wycieczki\Trips\obj\Debug\net8.0\re
 C:\Users\kacper\Desktop\Studia semestr 6\ASP\Wycieczki\Trips\obj\Debug\net8.0\TripsS.pdb
 C:\Users\kacper\Desktop\Studia semestr 6\ASP\Wycieczki\Trips\obj\Debug\net8.0\TripsS.genruntimeconfig.cache
 C:\Users\kacper\Desktop\Studia semestr 6\ASP\Wycieczki\Trips\obj\Debug\net8.0\ref\TripsS.dll
+C:\Users\kacper\Desktop\Studia semestr 6\ASP\Wycieczki\Trips\bin\Debug\net8.0\AutoMapper.dll

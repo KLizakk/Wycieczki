@@ -14,6 +14,7 @@ using TripsS.ViewModel;
 using TripsS.Validator;
 using System.ComponentModel.DataAnnotations;
 using FluentValidation;
+using AutoMapper;
 
 
 namespace Trips.Controllers
@@ -24,23 +25,20 @@ namespace Trips.Controllers
 
         private readonly IClientService _clientServices;
         private readonly IValidator<ClientViewModel> _clientValidator;
-        public ClientsController(IClientService clientRepository, IValidator<ClientViewModel> clientValidator)
+        private readonly IMapper _mapper;
+        public ClientsController(IClientService clientRepository, IValidator<ClientViewModel> clientValidator , IMapper mapper)
         {
             this._clientServices = clientRepository;
             _clientValidator = clientValidator;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
             var clients = await _clientServices.GetAllAsync();
-            var clientsList = clients.Select(client => new ClientViewModel
-            {
-                IdClient = client.IdClient,
-                FirstName = client.FirstName,
-                LastName = client.LastName,
-                Email = client.Email,
-                Phone = client.Phone
-            }).ToList();
+
+            var clientsList = _mapper.Map<List<Client>, List<ClientViewModel>>(clients);
+
             return View(clientsList);
         }
 
@@ -56,14 +54,7 @@ namespace Trips.Controllers
             {
                 return NotFound();
             }
-            var clientViewModel = new ClientViewModel
-            {
-                IdClient = client.IdClient,
-                FirstName = client.FirstName,
-                LastName = client.LastName,
-                Email = client.Email,
-                Phone = client.Phone
-            };
+            var clientViewModel = _mapper.Map<Client, ClientViewModel>(client);
 
             return View(clientViewModel);
         }
@@ -79,16 +70,7 @@ namespace Trips.Controllers
             var _clientValidatorR = _clientValidator.Validate(clientViewModel);
             if (_clientValidatorR.IsValid)
             {
-                var client = new Client
-                {
-                   FirstName = clientViewModel.FirstName,
-                   LastName = clientViewModel.LastName,
-                   Email = clientViewModel.Email,
-                   Phone = clientViewModel.Phone,
-                   IdClient = clientViewModel.IdClient
-                   
-
-                };
+                var client = _mapper.Map<ClientViewModel, Client>(clientViewModel);
                 await _clientServices.InsertAsync(client);
                 await _clientServices.SaveAsync();
                 return RedirectToAction(nameof(Index));
@@ -137,14 +119,7 @@ namespace Trips.Controllers
             }
             if (result.IsValid)
             {
-                    var client = new Client
-                    {
-                        IdClient = clientViewModel.IdClient,
-                        FirstName = clientViewModel.FirstName,
-                        LastName = clientViewModel.LastName,
-                        Email = clientViewModel.Email,
-                        Phone = clientViewModel.Phone
-                    };
+                    var client = _mapper.Map<ClientViewModel, Client>(clientViewModel);
                     try
                     {
                         _clientServices.Update(client);
@@ -174,14 +149,7 @@ namespace Trips.Controllers
             }
 
             var client = await _clientServices.GetByIdAsync(id);
-            var clientViewModel = new ClientViewModel
-            {
-                IdClient = client.IdClient,
-                FirstName = client.FirstName,
-                LastName = client.LastName,
-                Email = client.Email,
-                Phone = client.Phone
-            };
+            var clientViewModel = _mapper.Map<Client, ClientViewModel>(client);
 
             if (client == null)
             {

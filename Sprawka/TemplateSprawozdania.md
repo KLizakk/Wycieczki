@@ -66,8 +66,8 @@ row {
 
 &nbsp;
 
-<h2 style="text-align:center; border: none;"><b>Sprawozdanie nr 5</b></h3>
-<h2 style="text-align:center; border: none;">Warstwa ViewModel</h2>
+<h2 style="text-align:center; border: none;"><b>Sprawozdanie nr 6</b></h3>
+<h2 style="text-align:center; border: none;">Validator i AutoMapper</h2>
 
 &nbsp;
 
@@ -97,93 +97,92 @@ Kacper Lizak / 59443
 
 # Cel ćwieczenia
 
-## Cel ćwiczenia polega na implementacji warstwy ViewModel w projekcie ASP.NET w celu poprawy separacji logiki prezentacji od logiki biznesowej oraz ułatwienia przekazywania danych między widokami a kontrolerami.
+## Celem ćwiczenia było dodanie validatora i automappera do naszego projektu w ASP.NET
 
 # Wprowadzenie
 
-### Warstwa ViewModel w aplikacji webowej pełni rolę pośrednika między warstwą prezentacji a warstwą biznesową, zapewniając odpowiednie dane do wyświetlenia w widoku bezpośrednio niezależnie od modelu domenowego. Jest to szczególnie przydatne w przypadku, gdy widok wymaga danych z wielu różnych modeli biznesowych lub gdy potrzebne są dane w innym formacie niż te dostarczone przez model domenowy.
+### 
 
 ### 
 
 
 
 # Realizacja
-## Utworzenie folderu dla ViewModel'ów
+## Utworzenie folderu dla AutoMappera 
 
 
 
 <center>
 
-![alt text](image-2.png)
+![alt text](image-3.png)
+
 </center>
 
-## Przykład ViewModel'u
 
+
+## Kod AutoMappera
 ```cs
-public class ClientViewModel
+public class TripAutoMapper : Profile
 {
-    public int IdClient { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public int? Pesel { get; set; }
-    public string Email { get; set; }
-    public string? Phone { get; set; }
-
-    public IEnumerable<ReservationViewModel>? Reservations { get; set; }
-}
-```
-
-
-
-
-
-## Modyfikacja  Controlera dla Client
-```cs
-public async Task<IActionResult> Index()
-{
-    var clients = await _clientServices.GetAllAsync();
-    var clientsList = clients.Select(client => new ClientViewModel
+   public TripAutoMapper()
     {
-        IdClient = client.IdClient,
-        FirstName = client.FirstName,
-        LastName = client.LastName,
-        Email = client.Email,
-        Phone = client.Phone
-    }).ToList();
-    return View(clientsList);
-}
-```
-
-```cs
-public async Task<IActionResult> Details(int? id)
-{
-    if (id == null)
-    {
-        return NotFound();
+        CreateMap<TripViewModel, Trip>()
+             .ForMember(x => x.From, opt => opt.MapFrom(src => src.From.ToUpperInvariant()))
+             .ForMember(x => x.To, opt => opt.MapFrom(src => src.To.ToUpperInvariant()))
+             .ForMember(x => x.StartTrip, opt => opt.MapFrom(src => src.StartTrip.ToUniversalTime()))
+             .ForMember(x => x.EndTrip, opt => opt.MapFrom(src => src.EndTrip.ToUniversalTime()))
+             .ReverseMap();
+        CreateMap<ClientViewModel, Client>()
+            .ForMember(ClientViewModel => ClientViewModel.FirstName, opt => opt.MapFrom(src => src.FirstName.ToUpperInvariant()))
+            .ForMember(ClientViewModel => ClientViewModel.LastName, opt => opt.MapFrom(src => src.LastName.ToUpperInvariant()))
+            .ReverseMap();
+        CreateMap<ReservationViewModel, Reservation>()
+            .ForMember(ReservationViewModel => ReservationViewModel.ReservationDate, opt => opt.MapFrom(src => src.ReservationDate.ToUniversalTime()))
+            .ReverseMap();
     }
-
-    var client = await _clientServices.GetByIdAsync(id);
-    if (client == null)
-    {
-        return NotFound();
-    }
-    var clientViewModel = new ClientViewModel
-    {
-        IdClient = client.IdClient,
-        FirstName = client.FirstName,
-        LastName = client.LastName,
-        Email = client.Email,
-        Phone = client.Phone
-    };
-
-    return View(clientViewModel);
 }
 ```
+
+## Dodanie AutoMappera do buildera
+```cs
+builder.Services.AddAutoMapper(options =>
+{
+    options.AddProfile<TripAutoMapper>();
+});
+```
+
+## Stworzenie folderu dla Validator'ów
+
+<center>
+
+![alt text](image-4.png)
+
+</center>
+
+## Przykładowy validator dla Client
+
+```cs
+public class ClientValidator : AbstractValidator<ClientViewModel>
+{
+   public ClientValidator()
+    {
+       RuleFor(x => x.FirstName).NotEmpty().WithMessage("First name is required");
+       RuleFor(x => x.LastName).NotEmpty().WithMessage("Last name is required");
+       RuleFor(x => x.Email).NotEmpty().WithMessage("Email is required");
+       RuleFor(x => x.Email).EmailAddress().WithMessage("Email is not valid");
+       RuleFor(x => x.Phone).NotEmpty().WithMessage("Phone is required");
+       RuleFor(x => x.Phone).Length(9).WithMessage("Phone must have 9 digits");
+   }
+}
+```
+
+## Użycie validatora w kontrolerze 
 
 ```cs
 public async Task <IActionResult> Create([Bind("IdClient,FirstName,LastName,Email,Phone")] ClientViewModel clientViewModel)
 {
-    if (ModelState.IsValid)
+    var _clientValidatorR = _clientValidator.Validate(clientViewModel);
+    if (_clientValidatorR.IsValid)
     {
         var client = new Client
         {
@@ -204,105 +203,59 @@ public async Task <IActionResult> Create([Bind("IdClient,FirstName,LastName,Emai
 ```
 
 ```cs
-public async Task<IActionResult> Edit(int? id)
+public async Task <IActionResult> Edit(int id, [Bind("IdClient,FirstName,LastName,Email,PhoneNumber")] ClientViewModel clientViewModel)
 {
-    if (id == null)
+    if (id != clientViewModel.IdClient)
     {
         return NotFound();
     }
-
-    var client = await _clientServices.GetByIdAsync(id);
-    if (client == null)
+var result= _clientValidator.Validate(clientViewModel);
+if (!result.IsValid)
+{
+    foreach (var failure in result.Errors)
     {
-        return NotFound();
+        ModelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
     }
-    var clientViewModel = new ClientViewModel
-    {
-        IdClient = client.IdClient,
-        FirstName = client.FirstName,
-        LastName = client.LastName,
-        Email = client.Email,
-        Phone = client.Phone
-    };
+}
+if (result.IsValid)
+{
+        var client = new Client
+        {
+            IdClient = clientViewModel.IdClient,
+            FirstName = clientViewModel.FirstName,
+            LastName = clientViewModel.LastName,
+            Email = clientViewModel.Email,
+            Phone = clientViewModel.Phone
+        };
+        try
+        {
+            _clientServices.Update(client);
+            await _clientServices.SaveAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ClientExists(client.IdClient))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+        return RedirectToAction(nameof(Index));
+    }
     return View(clientViewModel);
 }
 ```
+## Dodanie validator'ów do program.cs
 
 ```cs
- public async Task <IActionResult> Edit(int id, [Bind("IdClient,FirstName,LastName,Email,PhoneNumber")] ClientViewModel clientViewModel)
- {
-     if (id != clientViewModel.IdClient)
-     {
-         return NotFound();
-     }
-
-     if (ModelState.IsValid)
-     {
-         var client = new Client
-         {
-             IdClient = clientViewModel.IdClient,
-             FirstName = clientViewModel.FirstName,
-             LastName = clientViewModel.LastName,
-             Email = clientViewModel.Email,
-             Phone = clientViewModel.Phone
-         };
-         try
-         {
-             _clientServices.Update(client);
-             await _clientServices.SaveAsync();
-         }
-         catch (DbUpdateConcurrencyException)
-         {
-             if (!ClientExists(client.IdClient))
-             {
-                 return NotFound();
-             }
-             else
-             {
-                 throw;
-             }
-         }
-         return RedirectToAction(nameof(Index));
-     }
-     return View(clientViewModel);
- }
- ```
-
-
-## Modyfikacja View dla Client:
-
-### Dla index: 
-```cs
-@model IEnumerable<TripsS.ViewModel.ClientViewModel>
-```
-### dla pozostałych:
-
-```cs
-@model TripsS.ViewModel.ClientViewModel
+// Validators
+builder.Services.AddScoped<IValidator<ClientViewModel>, ClientValidator>();
+builder.Services.AddScoped<IValidator<TripViewModel>, TripValidator>();
+builder.Services.AddScoped<IValidator<ReservationViewModel>, ReservationValidator>();
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Wnioski
-
-### Wnioski: Implementacja warstwy ViewModel w projekcie ASP.NET umożliwia odseparowanie logiki prezentacji od logiki biznesowej, co prowadzi do łatwiejszego zarządzania kodem i unikania nadmiernego powiązania między poszczególnymi komponentami aplikacji. Dzięki zastosowaniu ViewModeli możliwe jest również zachowanie elastyczności w dostarczaniu danych do widoków, co ułatwia rozwój i utrzymanie aplikacji w przyszłości.
-
-
-
-
-
-
+## Wnioski: 
+### Użycie walidatora pozwala na skuteczną weryfikację danych wejściowych, zapewniając poprawność i kompletność informacji przekazywanych do aplikacji. Z kolei wykorzystanie AutoMappera usprawnia proces mapowania danych między obiektami, co redukuje ilość powtarzalnego kodu i ułatwia zarządzanie aplikacją poprzez automatyzację tego procesu. Kombinacja tych narzędzi znacząco zwiększa niezawodność i czytelność kodu oraz przyspiesza rozwój oprogramowania.
