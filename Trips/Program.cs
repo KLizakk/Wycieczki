@@ -9,6 +9,7 @@ using TripsS.ViewModel;
 using TripsS.Validator;
 using FluentValidation;
 using TripsS.AutoMapper;
+using Microsoft.AspNetCore.Identity;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add DbContext to the service collection
 builder.Services.AddDbContext<TripContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MvcWycieczkiContext")));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<TripContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -55,7 +58,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
+app.MapRazorPages();
 app.Run();
 
 static void CreateDbIfNotExists(IHost host)

@@ -185,5 +185,7 @@ namespace Trips.Controllers
         {
             return _context.Exist(new Trip { IdTrip = id});
         }
+
+        
     }
 }

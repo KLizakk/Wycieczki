@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
 using Trips.Models;
 
 namespace Trips;
 
-public class TripContext : DbContext
+public class TripContext : IdentityDbContext<IdentityUser>
 {
     public DbSet<Trip> Trips { get; set; }
     public DbSet<Client> Clients { get; set; }
@@ -14,6 +17,7 @@ public class TripContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Trip>().ToTable("Trips");
         modelBuilder.Entity<Client>().ToTable("Clients");
         modelBuilder.Entity<Reservation>().ToTable("Reservations");
