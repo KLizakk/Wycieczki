@@ -15,10 +15,12 @@ using TripsS.Validator;
 using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Trips.Controllers
 {
+    [Authorize]
     public class ClientsController : Controller
     {
 

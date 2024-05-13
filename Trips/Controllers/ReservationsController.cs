@@ -12,14 +12,17 @@ using Trips.Models;
 using TripsS.Repositories.Interfaces;
 using TripsS.Services.Interfaces;
 using TripsS.ViewModel;
-
+using Microsoft.AspNetCore.Authorization;
 namespace TripsS.Controllers
 {
+    [Authorize]
     public class ReservationsController : Controller
     {
         private readonly IReservationService _context;
         private readonly IValidator<ReservationViewModel> _reservationValidator;
         private readonly IMapper _mapper;
+
+        
         public ReservationsController(IReservationService context, IValidator<ReservationViewModel> reservationValidator, IMapper mapper)
         {
             _context = context;
