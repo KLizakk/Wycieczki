@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using TripsS.ViewModel;
 
 namespace Trips.Controllers
 {
+    [AllowAnonymous]
     public class TripsController : Controller
     {
         private readonly ITripService _context;

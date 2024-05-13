@@ -66,8 +66,8 @@ row {
 
 &nbsp;
 
-<h2 style="text-align:center; border: none;"><b>Sprawozdanie nr 6</b></h3>
-<h2 style="text-align:center; border: none;">Validator i AutoMapper</h2>
+<h2 style="text-align:center; border: none;"><b>Sprawozdanie nr 7</b></h3>
+<h2 style="text-align:center; border: none;">Uproszczona autoryzacja</h2>
 
 &nbsp;
 
@@ -97,176 +97,109 @@ Kacper Lizak / 59443
 
 # Cel ćwieczenia
 
-## Celem ćwiczenia było dodanie validatora i automappera do naszego projektu w ASP.NET
+## Celem ćwiczenia było zapoznanie się z podstawami uwierzytelniania i autoryzacji użytkowników w aplikacjach tworzonych za pomocą ASPNET Core Identity.
+
 
 # Wprowadzenie
 
-### Validator w ASP.NET jest narzędziem służącym do sprawdzania poprawności danych wejściowych w formularzach i żądaniach HTTP. Zapewnia to integralność danych i zabezpiecza przed nieprawidłowymi danymi wprowadzanymi przez użytkowników. Automapper natomiast to biblioteka ułatwiająca mapowanie danych między różnymi modelami w aplikacji, redukując ilość powtarzalnego kodu i zwiększając czytelność oraz elastyczność implementacji. Ich wspólne zastosowanie w projekcie ASP.NET przyczynia się do zwiększenia niezawodności, łatwości utrzymania i szybkości rozwoju aplikacji poprzez automatyzację procesów walidacji i mapowania danych.
+### Uwierzytelnienie to proces polegający na potwierdzeniu zadeklarowanej tożsamości podmiotu biorącego udział w procesie komunikacji. W praktyce odbywa się to poprzez porównanie przedstawionych przez użytkownika dowodów tożsamości z danymi przechowywanymi w systemie. Celem uwierzytelniania jest uzyskanie określonego poziomu pewności, że dany podmiot jest w rzeczywistości tym, za którego się podaje.
 
-## Stworzenie folderu dla Validator'ów
+### Autoryzacja to proces nadawania podmiotowi dostępu do zasobu. Celem autoryzacji jest kontrola dostępu, która potwierdza, czy dany podmiot jest uprawniony do korzystania z żądanego zasobu. Autoryzacja następuje dopiero po potwierdzeniu tożsamości podmiotu za pomocą identyfikacji i uwierzytelnienia.
 
+### Microsoft.AspNetCore.Identity to interfejs API, który obsługuje funkcje logowania interfejsu użytkownika. Zarządza użytkownikami, hasłami, danymi profilu, rolami, oświadczeniami, tokenami, potwierdzeniem wiadomości e-mail i nie tylko. Użytkownicy mogą utworzyć konto przy użyciu informacji logowania przechowywanych w Identity lub mogą użyć zewnętrznego dostawcy logowania. ASP.NET Core Identity dodaje funkcje logowania interfejsu użytkownika do aplikacji internetowych platformy ASP.NET Core
+
+
+
+# Wykonanie ćwiczenia
+
+## W pierwszej kolejności należy zmienić dziedziczenie klasy TripContext z DbContext (EF Core) na IdentityDbContext (ASPNET Core Identity)
+
+```cs
+public class TripContext : IdentityDbContext<IdentityUser>
+{
+    public DbSet<Trip> Trips { get; set; }
+    public DbSet<Client> Clients { get; set; }
+    public DbSet<Reservation> Reservations { get; set; }
+    public TripContext(DbContextOptions<TripContext> options) : base(options)
+    {
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Trip>().ToTable("Trips");
+        modelBuilder.Entity<Client>().ToTable("Clients");
+        modelBuilder.Entity<Reservation>().ToTable("Reservations");
+    }
+}
+```
+
+## Następnie za pomocą scaffoldingu wygenerować widoki dla następujących zachwań : 
+### 1.Rejestracja
+### 2.Logowanie
+### 3.Wylogowywanie
+### 4.Potwierdzenie rejestracji
+### 5.Przypomnienie hasła
 <center>
 
-![alt text](image-4.png)
+![alt text](image-5.png)
 
 </center>
 
-## Przykładowy validator dla Client
-
-```cs
-public class ClientValidator : AbstractValidator<ClientViewModel>
-{
-   public ClientValidator()
-    {
-       RuleFor(x => x.FirstName).NotEmpty().WithMessage("First name is required");
-       RuleFor(x => x.LastName).NotEmpty().WithMessage("Last name is required");
-       RuleFor(x => x.Email).NotEmpty().WithMessage("Email is required");
-       RuleFor(x => x.Email).EmailAddress().WithMessage("Email is not valid");
-       RuleFor(x => x.Phone).NotEmpty().WithMessage("Phone is required");
-       RuleFor(x => x.Phone).Length(9).WithMessage("Phone must have 9 digits");
-   }
-}
-```
-
-## Użycie validatora w kontrolerze 
-
-```cs
-public async Task <IActionResult> Create([Bind("IdClient,FirstName,LastName,Email,Phone")] ClientViewModel clientViewModel)
-{
-    var _clientValidatorR = _clientValidator.Validate(clientViewModel);
-    if (_clientValidatorR.IsValid)
-    {
-        var client = new Client
-        {
-           FirstName = clientViewModel.FirstName,
-           LastName = clientViewModel.LastName,
-           Email = clientViewModel.Email,
-           Phone = clientViewModel.Phone,
-           IdClient = clientViewModel.IdClient
-           
-
-        };
-        await _clientServices.InsertAsync(client);
-        await _clientServices.SaveAsync();
-        return RedirectToAction(nameof(Index));
-    }
-    return View(clientViewModel);
-}
-```
-
-```cs
-public async Task <IActionResult> Edit(int id, [Bind("IdClient,FirstName,LastName,Email,PhoneNumber")] ClientViewModel clientViewModel)
-{
-    if (id != clientViewModel.IdClient)
-    {
-        return NotFound();
-    }
-var result= _clientValidator.Validate(clientViewModel);
-if (!result.IsValid)
-{
-    foreach (var failure in result.Errors)
-    {
-        ModelState.AddModelError(failure.PropertyName, failure.ErrorMessage);
-    }
-}
-if (result.IsValid)
-{
-        var client = new Client
-        {
-            IdClient = clientViewModel.IdClient,
-            FirstName = clientViewModel.FirstName,
-            LastName = clientViewModel.LastName,
-            Email = clientViewModel.Email,
-            Phone = clientViewModel.Phone
-        };
-        try
-        {
-            _clientServices.Update(client);
-            await _clientServices.SaveAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!ClientExists(client.IdClient))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-        return RedirectToAction(nameof(Index));
-    }
-    return View(clientViewModel);
-}
-```
-## Dodanie validator'ów do program.cs
-
-```cs
-// Validators
-builder.Services.AddScoped<IValidator<ClientViewModel>, ClientValidator>();
-builder.Services.AddScoped<IValidator<TripViewModel>, TripValidator>();
-builder.Services.AddScoped<IValidator<ReservationViewModel>, ReservationValidator>();
-```
-
-
-## Utworzenie folderu dla AutoMappera 
-
-
-
+## Co zostało wygenerowane : 
 <center>
 
-![alt text](image-3.png)
+![alt text](image-6.png)
 
 </center>
 
-
-
-## Kod AutoMappera
-```cs
-public class TripAutoMapper : Profile
-{
-   public TripAutoMapper()
-    {
-        CreateMap<TripViewModel, Trip>()
-             .ForMember(x => x.From, opt => opt.MapFrom(src => src.From.ToUpperInvariant()))
-             .ForMember(x => x.To, opt => opt.MapFrom(src => src.To.ToUpperInvariant()))
-             .ForMember(x => x.StartTrip, opt => opt.MapFrom(src => src.StartTrip.ToUniversalTime()))
-             .ForMember(x => x.EndTrip, opt => opt.MapFrom(src => src.EndTrip.ToUniversalTime()))
-             .ReverseMap();
-        CreateMap<ClientViewModel, Client>()
-            .ForMember(ClientViewModel => ClientViewModel.FirstName, opt => opt.MapFrom(src => src.FirstName.ToUpperInvariant()))
-            .ForMember(ClientViewModel => ClientViewModel.LastName, opt => opt.MapFrom(src => src.LastName.ToUpperInvariant()))
-            .ReverseMap();
-        CreateMap<ReservationViewModel, Reservation>()
-            .ForMember(ReservationViewModel => ReservationViewModel.ReservationDate, opt => opt.MapFrom(src => src.ReservationDate.ToUniversalTime()))
-            .ReverseMap();
-    }
-}
-```
-
-## Dodanie AutoMappera do buildera
-```cs
-builder.Services.AddAutoMapper(options =>
-{
-    options.AddProfile<TripAutoMapper>();
-});
-```
-
-## Przykład AutoMappera w ClientController
+## Mapowanie mechanizmuu uwierzytelniania, autoryzacji oraz mapowania stron blazor.
 
 ```cs
-public async Task<IActionResult> Index()
-{
-    var clients = await _clientServices.GetAllAsync();
-
-    var clientsList = _mapper.Map<List<Client>, List<ClientViewModel>>(clients);
-
-    return View(clientsList);
-}
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapRazorPages();
 ```
 
+## Przykład użycia udostępniania dostępu do danego kontrolera osobom nieuwierzytelnionym 
+
+```cs
+    [AllowAnonymous]
+    public class TripsController : Controller
+```
+
+<center>
+
+![alt text](image-7.png)
+</center>
+
+<center>
+
+![alt text](image-8.png)
+
+</center>
+
+### Jak widać użytkownik niezależnie od tego czy jest zalogowany czy nie widzi dokładnie to samo.
+
+##
+#
+#
+#
 
 
-## Wnioski: 
-### Użycie walidatora pozwala na skuteczną weryfikację danych wejściowych, zapewniając poprawność i kompletność informacji przekazywanych do aplikacji. Z kolei wykorzystanie AutoMappera usprawnia proces mapowania danych między obiektami, co redukuje ilość powtarzalnego kodu i ułatwia zarządzanie aplikacją poprzez automatyzację tego procesu. Kombinacja tych narzędzi znacząco zwiększa niezawodność i czytelność kodu oraz przyspiesza rozwój oprogramowania.
+## Przykład który niezalogowanemu użytkownikowi nie pozwoli zobaczyć rezerwacji: 
+
+```cs
+[Authorize]
+public class ReservationsController : Controller
+```
+
+### Widok dla niezalogowanego użytkownika :
+![alt text](image-11.png)
+
+### Widok dla zalogowanego użytkownika :
+![alt text](image-12.png)
+
+# Wnioski
+
+### Ćwiczenie to pozwoliło na zrozumienie i praktyczne zastosowanie uwierzytelniania i autoryzacji w aplikacjach ASP.NET Core za pomocą ASPNET Core Identity. Zabezpieczenie dostępu do stron aplikacji poprzez implementację uwierzytelniania i autoryzacji jest kluczowym elementem w tworzeniu bezpiecznych aplikacji internetowych.
