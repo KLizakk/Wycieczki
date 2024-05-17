@@ -33,10 +33,19 @@ builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IValidator<ClientViewModel>, ClientValidator>();
 builder.Services.AddScoped<IValidator<TripViewModel>, TripValidator>();
 builder.Services.AddScoped<IValidator<ReservationViewModel>, ReservationValidator>();
+//Automapper
 builder.Services.AddAutoMapper(options =>
 {
     options.AddProfile<TripAutoMapper>();
 });
+//Roles
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("Manager", policy => policy.RequireRole("Manager"));
+    options.AddPolicy("Member", policy => policy.RequireRole("Member"));
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -77,6 +86,21 @@ static void CreateDbIfNotExists(IHost host)
         {
             var logger = services.GetRequiredService<ILogger<Program>>();
             logger.LogError(ex, "An error occurred creating the DB.");
+        }
+    }
+    
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roles = new[] { "Admin", "Manager", "Member" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
 }
