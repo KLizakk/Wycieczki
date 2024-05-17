@@ -69,7 +69,7 @@ namespace TripsS.Areas.Identity.Pages.Account
                     pageHandler: null,
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
-
+                
                 await _emailSender.SendEmailAsync(
                     Input.Email,
                     "Reset Password",

@@ -1,4 +1,5 @@
-﻿using Trips.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using Trips.Models;
 namespace Trips.Data
 {
     public class DbInitializer
@@ -35,6 +36,20 @@ namespace Trips.Data
                 context.Clients.Add(c);
             }
             context.SaveChanges();
+            var Roles = new IdentityRole[]
+            {
+                new IdentityRole { Name = "Admin", NormalizedName = "ADMIN", Id = "1" },
+                new IdentityRole { Name = "Manager", NormalizedName = "MANAGER", Id = "2"},
+                new IdentityRole { Name = "Member", NormalizedName = "MEMBER", Id = "3"}
+            };
+            foreach (IdentityRole r in Roles)
+            {
+                context.Roles.Add(r);
+            }
+            context.SaveChanges();
+
+            
+         
         }
     }
 }

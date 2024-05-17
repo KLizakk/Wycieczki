@@ -10,6 +10,7 @@ using TripsS.Validator;
 using FluentValidation;
 using TripsS.AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 builder.Services.AddScoped<IClientRepository,ClientRepositorycs>();
 builder.Services.AddScoped<ITripRepository,TripRepository>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepositorycs>();
@@ -33,6 +35,18 @@ builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IValidator<ClientViewModel>, ClientValidator>();
 builder.Services.AddScoped<IValidator<TripViewModel>, TripValidator>();
 builder.Services.AddScoped<IValidator<ReservationViewModel>, ReservationValidator>();
+//serwisy do ról
+
+builder.Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<TripContext>();
+builder.Services.AddScoped<IUserStore<IdentityUser>,UserStore<IdentityUser,IdentityRole,TripContext, 
+    string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, 
+    IdentityUserToken<string>, IdentityRoleClaim<string>>>();
+
+
+
+
 //Automapper
 builder.Services.AddAutoMapper(options =>
 {
@@ -45,6 +59,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Manager", policy => policy.RequireRole("Manager"));
     options.AddPolicy("Member", policy => policy.RequireRole("Member"));
 });
+
 
 var app = builder.Build();
 
