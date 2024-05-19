@@ -66,8 +66,8 @@ row {
 
 &nbsp;
 
-<h2 style="text-align:center; border: none;"><b>Sprawozdanie nr 7</b></h3>
-<h2 style="text-align:center; border: none;">Uproszczona autoryzacja</h2>
+<h2 style="text-align:center; border: none;"><b>Sprawozdanie nr 8</b></h3>
+<h2 style="text-align:center; border: none;">System ról</h2>
 
 &nbsp;
 
@@ -97,109 +97,149 @@ Kacper Lizak / 59443
 
 # Cel ćwieczenia
 
-## Celem ćwiczenia było zapoznanie się z podstawami uwierzytelniania i autoryzacji użytkowników w aplikacjach tworzonych za pomocą ASPNET Core Identity.
+## Celem ćwiczenia było stworzenie i przypisanie ról użytkownikom.
+
+
 
 
 # Wprowadzenie
 
-### Uwierzytelnienie to proces polegający na potwierdzeniu zadeklarowanej tożsamości podmiotu biorącego udział w procesie komunikacji. W praktyce odbywa się to poprzez porównanie przedstawionych przez użytkownika dowodów tożsamości z danymi przechowywanymi w systemie. Celem uwierzytelniania jest uzyskanie określonego poziomu pewności, że dany podmiot jest w rzeczywistości tym, za którego się podaje.
+## Współczesne aplikacje internetowe często wymagają zarządzania różnorodnymi uprawnieniami użytkowników, aby zapewnić bezpieczeństwo oraz odpowiednie funkcjonowanie systemu. Jednym z kluczowych aspektów zarządzania uprawnieniami jest implementacja systemu ról. W systemie tym użytkownicy są przypisywani do określonych ról, które definiują ich prawa dostępu do różnych funkcjonalności aplikacji.
 
-### Autoryzacja to proces nadawania podmiotowi dostępu do zasobu. Celem autoryzacji jest kontrola dostępu, która potwierdza, czy dany podmiot jest uprawniony do korzystania z żądanego zasobu. Autoryzacja następuje dopiero po potwierdzeniu tożsamości podmiotu za pomocą identyfikacji i uwierzytelnienia.
+## W ramach niniejszego ćwiczenia naszym celem było stworzenie i przypisanie ról użytkownikom w aplikacji internetowej opartej na technologii ASP.NET. Dzięki temu rozwiązaniu możemy kontrolować, które zasoby i operacje są dostępne dla poszczególnych użytkowników na podstawie przypisanych im ról.
 
-### Microsoft.AspNetCore.Identity to interfejs API, który obsługuje funkcje logowania interfejsu użytkownika. Zarządza użytkownikami, hasłami, danymi profilu, rolami, oświadczeniami, tokenami, potwierdzeniem wiadomości e-mail i nie tylko. Użytkownicy mogą utworzyć konto przy użyciu informacji logowania przechowywanych w Identity lub mogą użyć zewnętrznego dostawcy logowania. ASP.NET Core Identity dodaje funkcje logowania interfejsu użytkownika do aplikacji internetowych platformy ASP.NET Core
+# Stworzenie ról
 
-
-
-# Wykonanie ćwiczenia
-
-## W pierwszej kolejności należy zmienić dziedziczenie klasy TripContext z DbContext (EF Core) na IdentityDbContext (ASPNET Core Identity)
-
+## Dodanie ról do DbInitializera
 ```cs
-public class TripContext : IdentityDbContext<IdentityUser>
+var Roles = new IdentityRole[]
 {
-    public DbSet<Trip> Trips { get; set; }
-    public DbSet<Client> Clients { get; set; }
-    public DbSet<Reservation> Reservations { get; set; }
-    public TripContext(DbContextOptions<TripContext> options) : base(options)
-    {
-    }
+    new IdentityRole { Name = "Admin", NormalizedName = "ADMIN", Id = "1" },
+    new IdentityRole { Name = "Manager", NormalizedName = "MANAGER", Id = "2"},
+    new IdentityRole { Name = "Member", NormalizedName = "MEMBER", Id = "3"}
+};
+foreach (IdentityRole r in Roles)
+{
+    context.Roles.Add(r);
+}
+context.SaveChanges();
+```
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Trip>().ToTable("Trips");
-        modelBuilder.Entity<Client>().ToTable("Clients");
-        modelBuilder.Entity<Reservation>().ToTable("Reservations");
-    }
+## Efekt przy tworzeniu bazy danych :
+![alt text](image-13.png)
+
+## Przypisanie ról użytkownikom : 
+
+![alt text](image-14.png)
+
+## Stworzenie widoków dla Admina do zarządzania rolami użytkowników:
+
+``` html
+@model List<Microsoft.AspNetCore.Identity.IdentityUser>
+
+<h1>Users</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    <a href="@Url.Action("ManageRoles", new { userId = user.Id })" class="btn btn-primary">Manage Roles</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+```
+
+## Jak to wygląda :
+![alt text](image-15.png)
+
+## Kod dla samego "ManageRoles"
+
+```html
+@model TripsS.ViewModel.ManageRolesViewModel
+
+<h1>Manage Roles for @Model.UserId</h1>
+
+<form asp-action="UpdateRoles" method="post">
+    <input type="hidden" name="userId" value="@Model.UserId" />
+    <div class="form-group">
+        @foreach (var role in Model.AllRoles)
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="roles" value="@role.Name" id="role_@role.Name" @(Model.UserRoles.Contains(role.Name) ? "checked" : "")>
+                <label class="form-check-label" for="role_@role.Name">@role.Name</label>
+            </div>
+        }
+    </div>
+    <button type="submit" class="btn btn-primary">Update Roles</button>
+</form>
+```
+
+## Sam widok: 
+![alt text](image-16.png)
+
+## Przykładowe wykorzystanie roli: 
+![alt text](image-17.png)
+
+## Jak widać użytkownik admin123 nie widzi nawet zarządzania użytkownikami, a spodowane jest to następującym kodem :
+
+```html
+@if (User.IsInRole("Admin"))
+{
+    <a class="navbar-brand" asp-area="" asp-controller="Admin" asp-action="Index">ManageRoles</a>
 }
 ```
 
-## Następnie za pomocą scaffoldingu wygenerować widoki dla następujących zachwań : 
-### 1.Rejestracja
-### 2.Logowanie
-### 3.Wylogowywanie
-### 4.Potwierdzenie rejestracji
-### 5.Przypomnienie hasła
-<center>
+## Teraz przypiszemy temu użytkownikowi rolę "Manager"
+![alt text](image-18.png)
 
-![alt text](image-5.png)
 
-</center>
+![alt text](image-19.png)
 
-## Co zostało wygenerowane : 
-<center>
+## Dzięki tej roli ma dostęp do np. zarządzania klientami :
+![alt text](image-21.png)
 
-![alt text](image-6.png)
-
-</center>
-
-## Mapowanie mechanizmuu uwierzytelniania, autoryzacji oraz mapowania stron blazor.
+## Dzieje się to dzięki :
 
 ```cs
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapRazorPages();
+[Authorize(Roles = "Manager,Admin")]
+public class ClientsController : Controller
 ```
+### Do tej klasy i jej metod mają dostęp tylko Manager i Admin
 
-## Przykład użycia udostępniania dostępu do danego kontrolera osobom nieuwierzytelnionym 
-
+## Manager może tworzyć i edytować rezerwacje:
 ```cs
-    [AllowAnonymous]
-    public class TripsController : Controller
+ [Authorize(Roles = "Manager,Admin")]
+ public async Task<IActionResult> Edit(Guid id, [Bind("IdReservation,IdClient,IdTrip,AmountOfPeople,ReservationDate,Status")] ReservationViewModel reservationViewModel)
+ ```
+ ```cs
+ [Authorize(Roles = "Manager,Admin")]
+public async Task<IActionResult> Create([Bind("IdReservation,IdClient,IdTrip,AmountOfPeople,ReservationDate,Status")] ReservationViewModel reservationViewModel)
 ```
+![alt text](image-22.png)
 
-<center>
+![alt text](image-23.png)
 
-![alt text](image-7.png)
-</center>
-
-<center>
-
-![alt text](image-8.png)
-
-</center>
-
-### Jak widać użytkownik niezależnie od tego czy jest zalogowany czy nie widzi dokładnie to samo.
-
-##
-#
-#
-#
-
-
-## Przykład który niezalogowanemu użytkownikowi nie pozwoli zobaczyć rezerwacji: 
-
+## Ale nie może ich usuwać :
 ```cs
-[Authorize]
-public class ReservationsController : Controller
+[Authorize(Roles = "Admin")]
+public async Task<IActionResult> Delete(Guid? id)
 ```
+![alt text](image-24.png)
 
-### Widok dla niezalogowanego użytkownika :
-![alt text](image-11.png)
+## Wnioski
 
-### Widok dla zalogowanego użytkownika :
-![alt text](image-12.png)
-
-# Wnioski
-
-### Ćwiczenie to pozwoliło na zrozumienie i praktyczne zastosowanie uwierzytelniania i autoryzacji w aplikacjach ASP.NET Core za pomocą ASPNET Core Identity. Zabezpieczenie dostępu do stron aplikacji poprzez implementację uwierzytelniania i autoryzacji jest kluczowym elementem w tworzeniu bezpiecznych aplikacji internetowych.
+### Dzięki temu ćwiczeniu dowiedzieliśmy się jak stworzyć role i przypisać je do użytkowników, a także jak wykorzystać role w naszym projekcie.  Dzięki temu możemy przydzielać różne uprawnienia różnym użytkownikom i w zależności od tego wyświetlać im różne widoki.

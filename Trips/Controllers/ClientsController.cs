@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Trips.Controllers
 {
-    [Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Manager,Admin")]
     public class ClientsController : Controller
     {
 

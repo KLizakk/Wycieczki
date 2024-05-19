@@ -15,7 +15,7 @@ using TripsS.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 namespace TripsS.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Manager,Admin,Member")]
     public class ReservationsController : Controller
     {
         private readonly IReservationService _context;
@@ -46,9 +46,10 @@ namespace TripsS.Controllers
             return View(reservationViewModel);
         }
 
-       
+
 
         // GET: Reservations/Create
+        [Authorize(Roles = "Manager,Admin")]
         public IActionResult Create()
         {
             return View();
@@ -59,6 +60,7 @@ namespace TripsS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Manager,Admin")]
         public async Task<IActionResult> Create([Bind("IdReservation,IdClient,IdTrip,AmountOfPeople,ReservationDate,Status")] ReservationViewModel reservationViewModel)
         {
             var result = _reservationValidator.Validate(reservationViewModel);
@@ -83,6 +85,7 @@ namespace TripsS.Controllers
         }
 
         // GET: Reservations/Edit/5
+        [Authorize(Roles="Manager,Admin")]
         public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
@@ -104,6 +107,7 @@ namespace TripsS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Manager,Admin")]
         public async Task<IActionResult> Edit(Guid id, [Bind("IdReservation,IdClient,IdTrip,AmountOfPeople,ReservationDate,Status")] ReservationViewModel reservationViewModel)
         {
             if (id != reservationViewModel.IdReservation)
@@ -143,6 +147,7 @@ namespace TripsS.Controllers
         }
 
         // GET: Reservations/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -159,7 +164,7 @@ namespace TripsS.Controllers
             var reservationViewModel = _mapper.Map<Reservation, ReservationViewModel>(reservation);
             return View(reservationViewModel);
         }
-
+        [Authorize(Roles = "Admin")]
         // POST: Reservations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
