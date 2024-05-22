@@ -142,7 +142,7 @@ namespace Trips.Controllers
                 }
                 return View(clientViewModel);
             }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

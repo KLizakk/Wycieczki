@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TripsS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4644685582abc6bbfe327177ea809f3d16bbcf11")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8787e1e5433e28c07b2f4316d16758b3329a95b6")]
 [assembly: System.Reflection.AssemblyProductAttribute("TripsS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TripsS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
