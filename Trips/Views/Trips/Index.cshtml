@@ -1,58 +1,42 @@
 ﻿@model IEnumerable<TripsS.ViewModel.TripViewModel>
+
 @{
-    ViewData["Title"] = "Index";    
+    ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1 class="h3 mb-4 text-gray-800">Wycieczki</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-action="Create"><i class="fas fa-plus-circle"></i> Dodaj nową</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.From)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.To)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartTrip)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndTrip)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.From)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.To)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartTrip)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndTrip)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdTrip">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdTrip">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdTrip">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Miejsce wyjazdu</th>
+                <th>Miejsce docelowe</th>
+                <th>Start wycieczki</th>
+                <th>Koniec wycieczki</th>
+                <th>Cena</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.From</td>
+                    <td>@item.To</td>
+                    <td>@item.StartTrip.ToShortDateString()</td>
+                    <td>@item.EndTrip.ToShortDateString()</td>
+                    <td>@item.Price</td>
+                    <td>
+                        <a class="btn btn-primary btn-sm" asp-action="Edit" asp-route-id="@item.IdTrip"><i class="fas fa-edit"></i> Edytuj</a>
+                        <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.IdTrip"><i class="fas fa-info-circle"></i> Szczegóły</a>
+                        <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.IdTrip"><i class="fas fa-trash-alt"></i> Usuń</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

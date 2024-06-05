@@ -3244,6 +3244,9 @@
             "rid": "win"
           }
         }
+      },
+      "Theme.SBAdmin2.Mvc/4.0.6": {
+        "type": "package"
       }
     }
   },
@@ -8917,6 +8920,21 @@
         "system.windows.extensions.nuspec",
         "useSharedDesignerContext.txt"
       ]
+    },
+    "Theme.SBAdmin2.Mvc/4.0.6": {
+      "sha512": "B90d8j0F/EgVVHWYKtA/YZcffNbmAiEZdHAiJZTKV658KDYRIQmVISBIJBbE1bh5J4t2XCOSIlMb7uAGoH4hJg==",
+      "type": "package",
+      "path": "theme.sbadmin2.mvc/4.0.6",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "content/Content/sb-admin-2.css",
+        "content/Content/sb-admin-2.min.css",
+        "content/Scripts/sb-admin-2.js",
+        "content/Scripts/sb-admin-2.min.js",
+        "theme.sbadmin2.mvc.4.0.6.nupkg.sha512",
+        "theme.sbadmin2.mvc.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
@@ -8930,7 +8948,8 @@
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.5",
       "Microsoft.EntityFrameworkCore.Sqlite >= 8.0.5",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.5",
-      "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 8.0.2"
+      "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 8.0.2",
+      "Theme.SBAdmin2.Mvc >= 4.0.6"
     ]
   },
   "packageFolders": {
@@ -9019,6 +9038,10 @@
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
             "target": "Package",
             "version": "[8.0.2, )"
+          },
+          "Theme.SBAdmin2.Mvc": {
+            "target": "Package",
+            "version": "[4.0.6, )"
           }
         },
         "imports": [

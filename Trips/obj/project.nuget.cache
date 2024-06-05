@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "B5u8xgNody6dnGGZQWLA+ZA8TIzh1IiNmrVuqe6FWv+/1FSUof+JDJxupbcC8iJyLcp4cN2PBweTwXhE9QD0Xg==",
+  "dgSpecHash": "tXWttgo6og0FjJJWK5Jbc1Boca8Hw/C4HsP0VHTXI6gSR/C7qCAWsAro1DbpsE9WIp+yDVHLO7T5CTcNNo6pvQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\kacper\\Desktop\\Studia semestr 6\\ASP\\Wycieczki\\Trips\\TripsS.csproj",
   "expectedPackageFiles": [
@@ -188,7 +188,8 @@
     "C:\\Users\\kacper\\.nuget\\packages\\system.threading.channels\\7.0.0\\system.threading.channels.7.0.0.nupkg.sha512",
     "C:\\Users\\kacper\\.nuget\\packages\\system.threading.tasks.dataflow\\7.0.0\\system.threading.tasks.dataflow.7.0.0.nupkg.sha512",
     "C:\\Users\\kacper\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
-    "C:\\Users\\kacper\\.nuget\\packages\\system.windows.extensions\\7.0.0\\system.windows.extensions.7.0.0.nupkg.sha512"
+    "C:\\Users\\kacper\\.nuget\\packages\\system.windows.extensions\\7.0.0\\system.windows.extensions.7.0.0.nupkg.sha512",
+    "C:\\Users\\kacper\\.nuget\\packages\\theme.sbadmin2.mvc\\4.0.6\\theme.sbadmin2.mvc.4.0.6.nupkg.sha512"
   ],
   "logs": []
 }

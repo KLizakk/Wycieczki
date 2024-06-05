@@ -7,58 +7,98 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Trips.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <!-- SB Admin 2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Zmiana koloru tła na zielony */
+        .sb-topnav {
+            background-color: #4CAF50 !important;
+        }
+
+        /* Zmiana koloru stopki */
+        .sb-footer {
+            background-color: #4CAF50 !important;
+            color: #fff !important;
+        }
+
+        /* Styl ikon w nawigacji */
+        .navbar-nav .nav-link i {
+            margin-right: 5px;
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        
+<body id="page-top">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sb-topnav">
+        <div class="container">
+            <!-- Logo/Home -->
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+
+            <!-- Przycisk do rozwijania na małych urządzeniach -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menu nawigacyjne -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <!-- Dodane mx-auto, aby umieścić elementy w środku -->
+                    <!-- Wycieczki -->
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Trips" asp-action="Index"><i class="fas fa-hiking"></i> Wycieczki</a>
+                    </li>
+
+                    <!-- Rezerwacje -->
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Reservations" asp-action="Index"><i class="fas fa-calendar-alt"></i> Rezerwacje</a>
+                    </li>
+
+                    <!-- Klienci -->
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Clients" asp-action="Index"><i class="fas fa-users"></i> Klienci</a>
+                    </li>
+
+                    <!-- Zarządzanie rolami - widoczne tylko dla admina -->
+                    @if (User.IsInRole("Admin"))
+                    {
                         <li class="nav-item">
-                            <a class="navbar-brand" asp-area="" asp-controller="Trips" asp-action="Index">Wycieczki</a>
-                            <a class="navbar-brand" asp-area="" asp-controller="Reservations" asp-action="Index">Rezerwacje</a>
-                            <a class="navbar-brand" asp-area="" asp-controller="Clients" asp-action="Index">Klienci</a>
-                            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                            <!-- Nav Item - Admin Panel -->
-                        
-                            
-                           
-                       
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <a class="navbar-brand" asp-area="" asp-controller="Admin" asp-action="Index">ManageRoles</a>
-                            }
-                            
-                            
+                            <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index"><i class="fas fa-user-cog"></i> ManageRoles</a>
                         </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
+                    }
+                </ul>
+
+                <!-- Część logowania - umieszczona po prawej stronie -->
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <partial name="_LoginPartial" />
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container-fluid">
+        <main class="mt-4 sb-main" role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - Trips - <a asp-area="" asp-page="/Privacy">Privacy</a>
+    <!-- Footer -->
+    <footer class="sticky-footer bg-white sb-footer">
+        <div class="container my-auto">
+            &copy; 2024 - Trips - <a asp-area="" asp-page="/Privacy" style="color: #fff;">Privacy</a>
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SB Admin 2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/js/sb-admin-2.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)

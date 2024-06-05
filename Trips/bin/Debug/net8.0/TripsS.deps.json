@@ -17,7 +17,8 @@
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.5",
           "Microsoft.EntityFrameworkCore.Sqlite": "8.0.5",
           "Microsoft.EntityFrameworkCore.Tools": "8.0.5",
-          "Microsoft.VisualStudio.Web.CodeGeneration.Design": "8.0.2"
+          "Microsoft.VisualStudio.Web.CodeGeneration.Design": "8.0.2",
+          "Theme.SBAdmin2.Mvc": "4.0.6"
         },
         "runtime": {
           "TripsS.dll": {}
@@ -2255,7 +2256,8 @@
             "fileVersion": "7.0.22.51805"
           }
         }
-      }
+      },
+      "Theme.SBAdmin2.Mvc/4.0.6": {}
     }
   },
   "libraries": {
@@ -3558,6 +3560,13 @@
       "sha512": "sha512-bR4qdCmssMMbo9Fatci49An5B1UaVJZHKNq70PRgzoLYIlitb8Tj7ns/Xt5Pz1CkERiTjcVBDU2y1AVrPBYkaw==",
       "path": "system.windows.extensions/7.0.0",
       "hashPath": "system.windows.extensions.7.0.0.nupkg.sha512"
+    },
+    "Theme.SBAdmin2.Mvc/4.0.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-B90d8j0F/EgVVHWYKtA/YZcffNbmAiEZdHAiJZTKV658KDYRIQmVISBIJBbE1bh5J4t2XCOSIlMb7uAGoH4hJg==",
+      "path": "theme.sbadmin2.mvc/4.0.6",
+      "hashPath": "theme.sbadmin2.mvc.4.0.6.nupkg.sha512"
     }
   }
 }
