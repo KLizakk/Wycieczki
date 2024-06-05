@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Trips.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <header>
@@ -25,6 +27,11 @@
                             <a class="navbar-brand" asp-area="" asp-controller="Reservations" asp-action="Index">Rezerwacje</a>
                             <a class="navbar-brand" asp-area="" asp-controller="Clients" asp-action="Index">Klienci</a>
                             <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <!-- Nav Item - Admin Panel -->
+                        
+                            
+                           
+                       
                             @if (User.IsInRole("Admin"))
                             {
                                 <a class="navbar-brand" asp-area="" asp-controller="Admin" asp-action="Index">ManageRoles</a>
