@@ -233,12 +233,83 @@ Kacper Lizak / 59443
 
 ![alt text](image-28.png)
 
+## Panel admina:
+<center>
+
+![alt text](image-34.png)
+</center>
+
+### Kod dla panelu admina:
+```html
+<div class="row" >
+    @if (User.IsInRole("Admin"))
+    {
+        <!-- Menu boczne -->
+        <!-- Sidebar -->
+        <nav class="col-lg-2 navbar navbar-expand-lg navbar-light bg-light sidebar" style="  align-items:baseline">
+            <div class="container">
+                <ul class="navbar-nav flex-column">
+                    <!-- Brand -->
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-brand" href="#">Menu</a>
+                    </li>
+                    <!-- Divider -->
+                    <hr class="sidebar-divider">
+                    <!-- Item: Wycieczki -->
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Trips" asp-action="Index">
+                            <i class="fas fa-hiking mr-2"></i>Wycieczki
+                        </a>
+                    </li>
+                    <!-- Divider -->
+                    <hr class="sidebar-divider">
+                    <!-- Item: Zarządzanie rolami -->
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">
+                            <i class="fas fa-user-cog mr-2"></i>Zarządzanie rolami
+                        </a>
+                    </li>
+                    <hr class="sidebar-divider">
+                    <!-- Klienci -->
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="Clients" asp-action="Index">
+                            <i class="fas fa-users mr-2"></i> Klienci
+                            </a>
+                    </li>
+                    <!-- Divider -->
+                    <hr class="sidebar-divider">
+                </ul>
+            </div>
+        </nav>
+
+
+        <!-- Zawartość główna -->
+        <div class="col-lg-9">
+            <main class="mt-4 sb-main" role="main">
+                @RenderBody()
+            </main>
+        </div>
+    }
+    else
+    {
+        <!-- Zawartość główna na pełnej szerokości -->
+        <div class="col-lg-12">
+            <main class="mt-4 sb-main" role="main">
+                @RenderBody()
+            </main>
+        </div>
+    }
+``` 
 
 ## Nowy layout dla wycieczek :
-![alt text](image-29.png)
+### Dla admina
+![alt text](image-31.png)
+
+### Dla zwykłego użtykownika:
+![alt text](image-33.png)
 
 ## Nowy layout dla panelu zarządzania rolami :
-![alt text](image-30.png)
+![alt text](image-32.png)
 
 # Wnioski:
 
