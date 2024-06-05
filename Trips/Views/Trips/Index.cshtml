@@ -18,7 +18,11 @@
                 <th>Start wycieczki</th>
                 <th>Koniec wycieczki</th>
                 <th>Cena</th>
-                <th>Akcje</th>
+                @if (User.IsInRole("Admin"))
+                {
+                    <th>Akcje</th>
+                }
+                
             </tr>
         </thead>
         <tbody>
@@ -30,11 +34,14 @@
                     <td>@item.StartTrip.ToShortDateString()</td>
                     <td>@item.EndTrip.ToShortDateString()</td>
                     <td>@item.Price</td>
-                    <td>
-                        <a class="btn btn-primary btn-sm" asp-action="Edit" asp-route-id="@item.IdTrip"><i class="fas fa-edit"></i> Edytuj</a>
-                        <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.IdTrip"><i class="fas fa-info-circle"></i> Szczegóły</a>
-                        <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.IdTrip"><i class="fas fa-trash-alt"></i> Usuń</a>
-                    </td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td>
+                            <a class="btn btn-primary btn-sm" asp-action="Edit" asp-route-id="@item.IdTrip"><i class="fas fa-edit"></i> Edytuj</a>
+                            <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.IdTrip"><i class="fas fa-info-circle"></i> Szczegóły</a>
+                            <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.IdTrip"><i class="fas fa-trash-alt"></i> Usuń</a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
